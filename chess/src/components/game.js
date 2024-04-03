@@ -4,6 +4,8 @@ import Board from './board.js';
 import FallenSoldierBlock from './fallen_pieces_block.js';
 import initialiseChessBoard from '../helpers/board-initialiser.js';
 import King from '../pieces/king.js';
+import ReactModal from 'react-modal';
+
 
 export default class Game extends React.Component {
   constructor(){
@@ -16,9 +18,30 @@ export default class Game extends React.Component {
       sourceSelection: -1,
       status: '',
       turn: 'white',
-      win: false
-    }
+      win: false,
+      showModal: false
+    };
+    this.handleOpenModal = this.handleOpenModal.bind(this);
+    this.handleCloseModal = this.handleCloseModal.bind(this);
+  };
+
+  handleOpenModal () {
+    this.setState({ showModal: true });
   }
+  
+  handleCloseModal () {
+    this.setState({ 
+      squares: initialiseChessBoard(),
+      whiteFallenSoldiers: [],
+      blackFallenSoldiers: [],
+      player: 1,
+      sourceSelection: -1,
+      status: '',
+      turn: 'white',
+      win: false,
+      showModal: false
+     });
+  } 
  
   handleClick(i){
     if (!this.state.win){
@@ -29,7 +52,7 @@ export default class Game extends React.Component {
           this.setState({status: "Wrong selection. Choose player " + this.state.player + " pieces."});
         }
         else{
-          squares[i].style = {...squares[i].style, backgroundColor: "RGB(111,143,114)"};
+          squares[i].style = {...squares[i].style, backgroundColor: "RGB(70, 130, 180)"};
           this.setState({
             status: "Choose destination for the selected piece",
             sourceSelection: i
@@ -78,6 +101,7 @@ export default class Game extends React.Component {
                 blackFallenSoldiers: blackFallenSoldiers,
                 win: true,
                 status: `Player ${this.state.player} won the game!`,
+                showModal: true
               });
               return
             }
@@ -122,14 +146,13 @@ export default class Game extends React.Component {
 
     return (
       <div>
-        <div className="game">
           <div className="game-board">
             <Board 
             squares = {this.state.squares}
             onClick = {(i) => this.handleClick(i)}
             />
           </div>
-          <div className="game-info">
+        <div className="game-info">
             <h3>Turn</h3>
             <div id="player-turn-box" style={{backgroundColor: this.state.turn}}>
   
@@ -143,13 +166,22 @@ export default class Game extends React.Component {
               blackFallenSoldiers = {this.state.blackFallenSoldiers}
               />
             }
-            </div>
-            
-          </div>
+            </div>    
         </div>
-      </div>
-
-     
+        <ReactModal 
+           isOpen={this.state.showModal}
+           contentLabel="Modal Window"
+           className="Modal"
+           overlayClassName="Overlay">
+              <div>
+                <h3>End of the Game!</h3>
+                <p>
+                {this.state.turn.charAt(0).toUpperCase() + this.state.turn.slice(1)} side won!
+                </p>
+            </div>
+            <button class="btn" onClick={this.handleCloseModal}>Restart</button>
+        </ReactModal>
+    </div>
       );
   }
 }
