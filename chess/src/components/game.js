@@ -26,7 +26,7 @@ export default class Game extends React.Component {
         this.setState({status: "Wrong selection. Choose player " + this.state.player + " pieces."});
       }
       else{
-        squares[i].style = {...squares[i].style, backgroundColor: "RGB(111,143,114)"}; // Emerald from http://omgchess.blogspot.com/2015/09/chess-board-color-schemes.html
+        squares[i].style = {...squares[i].style, backgroundColor: "RGB(111,143,114)"};
         this.setState({
           status: "Choose destination for the selected piece",
           sourceSelection: i
@@ -36,10 +36,12 @@ export default class Game extends React.Component {
 
     else if(this.state.sourceSelection > -1){ 
       if(squares[i] && squares[i].player === this.state.player){
+        squares[this.state.sourceSelection].style = {...squares[this.state.sourceSelection].style, backgroundColor: ""};
         this.setState({
           status: "Wrong selection. Choose valid source and destination again.",
           sourceSelection: -1,
         });
+
       }
       else{
         
@@ -63,6 +65,7 @@ export default class Game extends React.Component {
           console.log("whiteFallenSoldiers", whiteFallenSoldiers) ;
           console.log("blackFallenSoldiers", blackFallenSoldiers);
           squares[i] = squares[this.state.sourceSelection];
+          squares[i].style = {...squares[i].style, backgroundColor: ""}
           squares[this.state.sourceSelection] = null;
           let player = this.state.player === 1? 2: 1;
           let turn = this.state.turn === 'white'? 'black' : 'white';
@@ -75,9 +78,9 @@ export default class Game extends React.Component {
             status: '',
             turn: turn
           });
-          squares[i].style = {...squares[i].style, backgroundColor: ""}
         }
         else{
+          squares[this.state.sourceSelection].style = {...squares[this.state.sourceSelection].style, backgroundColor: ""};
           this.setState({
             status: "Wrong selection. Choose valid source and destination again.",
             sourceSelection: -1,
@@ -126,10 +129,6 @@ export default class Game extends React.Component {
             </div>
             
           </div>
-        </div>
-
-        <div className="icons-attribution">
-          <div> <small> Chess Icons And Favicon (extracted) By en:User:Cburnett [<a href="http://www.gnu.org/copyleft/fdl.html">GFDL</a>, <a href="http://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA-3.0</a>, <a href="http://opensource.org/licenses/bsd-license.php">BSD</a> or <a href="http://www.gnu.org/licenses/gpl.html">GPL</a>], <a href="https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces">via Wikimedia Commons</a> </small></div>
         </div>
       </div>
 

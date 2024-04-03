@@ -11,7 +11,7 @@ export default class Rook extends Piece {
     return (Math.abs(src - dest) % 8 === 0 || (dest >= (src - mod) && dest < (src + diff)));
   }
 
-
+  
   getSrcToDestPath(src, dest){
     let path = [], pathStart, pathEnd, incrementBy;
     if(src > dest){
