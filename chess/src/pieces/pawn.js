@@ -31,13 +31,31 @@ export default class Pawn extends Piece {
   }
 
 
+  getPossiblePos(src) {
+    if(this.initialPositions[1].find((i) => i === src) && this.player === 1){
+      return [src - 8, src - 16];
+    } else if (this.initialPositions[2].find((i) => i === src) && this.player === 2) {
+      return [src + 8, src + 16]
+    };
+    if (this.player === 1) {
+      return [src - 8]
+    } else {
+      return [src + 8]
+    };
+  }
+
   getSrcToDestPath(src, dest){
     if(dest === src - 16){
-      return [src - 8];
+      return [src - 8, src - 16];
     }
     else if(dest === src + 16){
-      return [src + 8];
+      return [src + 8, src + 16];
     }
-    return [];
+    if (this.player === 1) {
+      return [src - 8];
+    } else {
+      return [src + 8]
+    }
+    
   }
 }

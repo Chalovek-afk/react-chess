@@ -21,7 +21,7 @@ ol, ul {
 
 .square {
   background: transparent;
-  border: 1px solid transparent;
+  border: 1px solid black;
   float: left;
   height: 72px;
   margin-right: -1px;

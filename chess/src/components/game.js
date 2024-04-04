@@ -5,6 +5,7 @@ import FallenSoldierBlock from './fallen_pieces_block.js';
 import initialiseChessBoard from '../helpers/board-initialiser.js';
 import King from '../pieces/king.js';
 import ReactModal from 'react-modal';
+import Piece from '../pieces/piece.js';
 
 
 export default class Game extends React.Component {
@@ -53,15 +54,22 @@ export default class Game extends React.Component {
         }
         else{
           squares[i].style = {...squares[i].style, backgroundColor: "RGB(70, 130, 180)"};
+          const showPath = squares[i].getPossiblePos(i)
+          for (let j of showPath) {
+
+            squares[j] = new Piece(this.state.player)
+            squares[j].style = {...squares[j].style, backgroundColor: "RGB(255, 228, 181)"};
+          };
           this.setState({
             status: "Choose destination for the selected piece",
-            sourceSelection: i
+            sourceSelection: i,
+            squares: squares,
           });
         }
       }
 
       else if(this.state.sourceSelection > -1){ 
-        if(squares[i] && squares[i].player === this.state.player){
+        if(squares[i] && squares[i].player === this.state.player && squares[i].constructor.name !== 'Piece'){
           squares[this.state.sourceSelection].style = {...squares[this.state.sourceSelection].style, backgroundColor: ""};
           this.setState({
             status: "Wrong selection. Choose valid source and destination again.",
@@ -70,21 +78,19 @@ export default class Game extends React.Component {
 
         }
         else{
-          
           const squares = this.state.squares.slice();
           const whiteFallenSoldiers = this.state.whiteFallenSoldiers.slice();
           const blackFallenSoldiers = this.state.blackFallenSoldiers.slice();
-          const isDestEnemyOccupied = squares[i]? true : false; 
+          const isDestEnemyOccupied = squares[i] && squares[i].constructor.name !== "Piece"? true : false; 
           const isMovePossible = squares[this.state.sourceSelection].isMovePossible(this.state.sourceSelection, i, isDestEnemyOccupied);
           const srcToDestPath = squares[this.state.sourceSelection].getSrcToDestPath(this.state.sourceSelection, i);
           const isMoveLegal = this.isMoveLegal(srcToDestPath);
-
           if(isMovePossible && isMoveLegal){
             if(squares[i] !== null){
-              if(squares[i].player === 1){
+              if(squares[i].player === 1 && squares[i].constructor.name !== "Piece"){
                 whiteFallenSoldiers.push(squares[i]);
               }
-              else{
+              else if (squares[i].player === 2 && squares[i].constructor.name !== "Piece"){
                 blackFallenSoldiers.push(squares[i]);
               }
             }
@@ -105,11 +111,25 @@ export default class Game extends React.Component {
               });
               return
             }
+            const showPath = squares[this.state.sourceSelection].getPossiblePos(this.state.sourceSelection)
             squares[i] = squares[this.state.sourceSelection];
             squares[i].style = {...squares[i].style, backgroundColor: ""}
             squares[this.state.sourceSelection] = null;
             let player = this.state.player === 1? 2: 1;
             let turn = this.state.turn === 'white'? 'black' : 'white';
+            console.log(squares)
+            console.log(srcToDestPath)
+            for (let j of srcToDestPath) {
+              console.log(j)
+            }
+            for (let j of showPath) {
+              squares[j].style = {...squares[j].style, backgroundColor: ""};
+              if (squares[j].constructor.name === 'Piece'){
+                console.log(squares[j])
+                squares[j] = null
+              };
+            }
+            console.log(squares)
             this.setState({
               sourceSelection: -1,
               squares: squares,
@@ -135,7 +155,7 @@ export default class Game extends React.Component {
   isMoveLegal(srcToDestPath){
     let isLegal = true;
     for(let i = 0; i < srcToDestPath.length; i++){
-      if(this.state.squares[srcToDestPath[i]] !== null){
+      if(this.state.squares[srcToDestPath[i]] !== null && this.state.squares[srcToDestPath[i]].constructor.name !== "Piece" ){
         isLegal = false;
       }
     }
