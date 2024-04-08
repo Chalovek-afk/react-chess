@@ -56,9 +56,10 @@ export default class Game extends React.Component {
           squares[i].style = {...squares[i].style, backgroundColor: "RGB(70, 130, 180)"};
           const showPath = squares[i].getPossiblePos(i)
           for (let j of showPath) {
-
+            if (!squares[j]){
             squares[j] = new Piece(this.state.player)
             squares[j].style = {...squares[j].style, backgroundColor: "RGB(255, 228, 181)"};
+            }
           };
           this.setState({
             status: "Choose destination for the selected piece",
@@ -68,14 +69,40 @@ export default class Game extends React.Component {
         }
       }
 
-      else if(this.state.sourceSelection > -1){ 
-        if(squares[i] && squares[i].player === this.state.player && squares[i].constructor.name !== 'Piece'){
+      else if(this.state.sourceSelection > -1){
+        if (!squares[i]){
           squares[this.state.sourceSelection].style = {...squares[this.state.sourceSelection].style, backgroundColor: ""};
+          const showPath = squares[this.state.sourceSelection].getPossiblePos(this.state.sourceSelection)
+          console.log(this.state.sourceSelection)
+          console.log(showPath, 1)
+          for (let j of showPath) {
+            squares[j].style = {...squares[j].style, backgroundColor: ""};
+            if (squares[j].constructor.name === 'Piece'){
+              squares[j] = null
+            };
+          }
           this.setState({
-            status: "Wrong selection. Choose valid source and destination again.",
+            status: "Wrong selection. Choose valid source and destination again1234.",
             sourceSelection: -1,
+            squares: squares
           });
-
+          return
+        } 
+        if(squares[i].player === this.state.player && squares[i].constructor.name !== 'Piece'){
+          squares[this.state.sourceSelection].style = {...squares[this.state.sourceSelection].style, backgroundColor: ""};
+          const showPath = squares[this.state.sourceSelection].getPossiblePos(this.state.sourceSelection)
+          for (let j of showPath) {
+            squares[j].style = {...squares[j].style, backgroundColor: ""};
+            if (squares[j].constructor.name === 'Piece'){
+              console.log(squares[j])
+              squares[j] = null
+            };
+          }
+          this.setState({
+            status: "Wrong selection. Choose valid source and destination again123.",
+            sourceSelection: -1,
+            squares: squares
+          });
         }
         else{
           const squares = this.state.squares.slice();
@@ -85,6 +112,8 @@ export default class Game extends React.Component {
           const isMovePossible = squares[this.state.sourceSelection].isMovePossible(this.state.sourceSelection, i, isDestEnemyOccupied);
           const srcToDestPath = squares[this.state.sourceSelection].getSrcToDestPath(this.state.sourceSelection, i);
           const isMoveLegal = this.isMoveLegal(srcToDestPath);
+          console.log(srcToDestPath)
+          console.log(isMoveLegal, isMovePossible)
           if(isMovePossible && isMoveLegal){
             if(squares[i] !== null){
               if(squares[i].player === 1 && squares[i].constructor.name !== "Piece"){
@@ -117,11 +146,6 @@ export default class Game extends React.Component {
             squares[this.state.sourceSelection] = null;
             let player = this.state.player === 1? 2: 1;
             let turn = this.state.turn === 'white'? 'black' : 'white';
-            console.log(squares)
-            console.log(srcToDestPath)
-            for (let j of srcToDestPath) {
-              console.log(j)
-            }
             for (let j of showPath) {
               squares[j].style = {...squares[j].style, backgroundColor: ""};
               if (squares[j].constructor.name === 'Piece'){
@@ -155,7 +179,7 @@ export default class Game extends React.Component {
   isMoveLegal(srcToDestPath){
     let isLegal = true;
     for(let i = 0; i < srcToDestPath.length; i++){
-      if(this.state.squares[srcToDestPath[i]] !== null && this.state.squares[srcToDestPath[i]].constructor.name !== "Piece" ){
+      if(this.state.squares[srcToDestPath[i]].constructor.name !== "Piece" && this.state.squares[srcToDestPath[i]] === this.state.player){
         isLegal = false;
       }
     }

@@ -12,6 +12,21 @@ export default class Rook extends Piece {
   }
 
   
+  getPossiblePos(src) {
+    let poses = []
+    console.log(src)
+    poses.push(src)
+    for (let i = src; i > 8; i -= 8){
+      poses.push(i)
+    }
+    // for (let i = src; Math.floor(i / 8) < 8; i + 8){
+    //   poses.push(i)
+    // }
+    return poses
+  }
+
+
+
   getSrcToDestPath(src, dest){
     let path = [], pathStart, pathEnd, incrementBy;
     if(src > dest){
@@ -31,7 +46,7 @@ export default class Rook extends Piece {
       pathStart += 1;
     }
 
-    for(let i = pathStart; i < pathEnd; i+=incrementBy){
+    for(let i = pathStart; i <= pathEnd; i+=incrementBy){
       path.push(i);
     }
     return path;
